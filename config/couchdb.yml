@@ -1,0 +1,5 @@
+development:
+  protocol: 'http'
+  host: mynix.cloudapp.net
+  port: 8080
+  prefix: games
