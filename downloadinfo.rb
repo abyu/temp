@@ -64,7 +64,7 @@ def download_game_info
       game_data_raw = JSON.parse(info_gateway.download(appid))
       get_game_info(game_data_raw, appid, error_log, failed_app_ids)
     rescue Exception => e
-      error_log.write("Exception: Failed to download app data for appid: #{appid}, with exception: #{exception}\n")
+      error_log.write("Exception: Failed to download app data for appid: #{appid}, with exception: #{e}\n")
       failed_app_ids.write("#{appid}\n")
     end
   end
