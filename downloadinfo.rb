@@ -83,6 +83,7 @@ def get_game_info(game_data_raw, appid, log, failed_log)
   end
 end
 
+download_game_info
 
 
 
