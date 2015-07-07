@@ -21,7 +21,7 @@ class Game < CouchRest::Model::Base
   timestamps!
 
   design do
-    view :all
+    view :by_name
   end
 
 end
@@ -43,7 +43,7 @@ class SteamGame < Game
   end
 
   def initialize(opts = {})
-    
+    super()
     SCHEMA_KEYS.each do |key|
       send("#{key}=", opts[key])
     end
@@ -57,26 +57,32 @@ end
 def download_game_info
   info_gateway = GameInformationGateway.new
   error_log = File.open("error.log", "w")
+  failed_app_ids = File.open("failed.log", "w")
   File.open("allappids").each do |id|
     appid = id.strip
     begin
       game_data_raw = JSON.parse(info_gateway.download(appid))
-      get_game_info(game_data_raw, appid, error_log)
+      get_game_info(game_data_raw, appid, error_log, failed_app_ids)
     rescue Exception => e
       error_log.write("Exception: Failed to download app data for appid: #{appid}, with exception: #{exception}\n")
+      failed_app_ids.write("#{appid}\n")
     end
   end
+  error_log.close()
+  failed_app_ids.close()
 end
 
-def get_game_info(game_data_raw, appid, log)
+def get_game_info(game_data_raw, appid, log, failed_log)
   if game_data_raw[appid.to_s]["success"]
     game_data = game_data_raw[appid.to_s]["data"]
     game = SteamGame.new(game_data)
     game.save
   else
     log.write("No data available for appid: #{appid}\n")
+    failed_log.write("#{appid}\n")
   end
 end
 
-download_game_info
+
+
 
