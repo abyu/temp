@@ -42,6 +42,9 @@ class SteamGame < Game
     end
   end
 
+  design do
+    view :by_steam_appid
+  end
   def initialize(opts = {})
     super()
     SCHEMA_KEYS.each do |key|
@@ -83,7 +86,14 @@ def get_game_info(game_data_raw, appid, log, failed_log)
   end
 end
 
-download_game_info
+def get_stats
+  downloaded = SteamGame.all.each { |game| game.steam_appid}
+  downloadedappids = File.open("downloaded", "w")
+  downloadedappids.write(downloaded.join("\n"))
+  downloadedappids.close()
+end
+
+get_stats
 
 
 
